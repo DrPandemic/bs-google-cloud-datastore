@@ -19,12 +19,22 @@ Datastore.save app {"key": key1, "data": { "name": "that name", "yes": "42" }} (
   Js.log b
 });
 
-Datastore.get app key0 (fun a b => {
+Datastore.save app {"key": key2, "data": { "name": "second", "yes": 42 }} (fun a b => {
   Js.log a;
   Js.log b
 });
 
-Datastore.getMultiple app [| key0, key1 |] (fun a b => {
+Datastore.get app key1 (fun a b => {
+  Js.log a;
+  Js.log b
+});
+
+Datastore.getMultiple app [| key1, key2 |] (fun a b => {
+  Js.log a;
+  Js.log b
+});
+
+Datastore.delete app key1 (fun a b => {
   Js.log a;
   Js.log b
 });
