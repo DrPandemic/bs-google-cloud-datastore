@@ -44,6 +44,8 @@ module Query = {
 module Datastore = {
   type t;
 
+  type modificationCallback = (Js.nullable Error.t => Js.Json.t => unit);
+
   /** [make ()] creates an instance of the datastore class. */
   external make : unit => t = "@google-cloud/datastore" [@@bs.module];
 
@@ -68,16 +70,27 @@ module Datastore = {
       incomplete, its associated object is inserted and the original Key object
       is updated to contain the generated ID. **/
   external save : t => Js.t {. key : key, data : Js.t {..}} =>
-    (Js.nullable Error.t => Js.Json.t => unit) => unit = "save" [@@bs.send];
+    modificationCallback => unit = "" [@@bs.send];
   external saveMultiple : t => array (Js.t {. key : key, data : Js.t {..}}) =>
-    (Js.nullable Error.t => Js.Json.t => unit) => unit = "save" [@@bs.send];
+    modificationCallback => unit = "save" [@@bs.send];
+
+  /** [update datastore] **/
+  external update : t => Js.t {. key : key, data : Js.t {..}} =>
+    modificationCallback => unit = "" [@@bs.send];
+  external updateMultiple : t => array (Js.t {. key : key, data : Js.t {..}}) =>
+    modificationCallback => unit = "update" [@@bs.send];
+
+  /** [upsert datastore] **/
+  external upsert : t => Js.t {. key : key, data : Js.t {..}} =>
+    modificationCallback => unit = "" [@@bs.send];
+  external upsertMultiple : t => array (Js.t {. key : key, data : Js.t {..}}) =>
+    modificationCallback => unit = "upsert" [@@bs.send];
 
   /** [delete datastore] Delete all entities identified with the specified
       key(s). **/
-  external delete : t => key => (Js.nullable Error.t => Js.Json.t => unit) => unit =
-    "" [@@bs.send];
-  external deleteMultiple : t => array key =>
-    (Js.nullable Error.t => Js.Json.t => unit) => unit = "delete" [@@bs.send];
+  external delete : t => key => modificationCallback => unit = "" [@@bs.send];
+  external deleteMultiple : t => array key => modificationCallback => unit =
+    "delete" [@@bs.send];
 
   /** [createQuery datastore] Create a query for the specified kind **/
   /** kind **/
