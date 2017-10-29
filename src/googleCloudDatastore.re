@@ -6,6 +6,8 @@ type path 'a = Js.t {. namespace : string, path : kind 'a};
 
 type cursor = string;
 
+type propertyName = string;
+
 /** From bs-express */
 module Error = {
   type t;
@@ -24,15 +26,15 @@ module Query = {
       operators are =, <, >, <=, and >=. "Not equal" and IN operators are
       currently not supported. **/
   /** Defaults to = **/
-  external filter : string => Js.Json.t => t = "" [@@bs.send.pipe: t];
-  external filterWithOperator : string => string => Js.Json.t => t =
+  external filter : propertyName => Js.Json.t => t = "" [@@bs.send.pipe: t];
+  external filterWithOperator : propertyName => string => Js.Json.t => t =
     "filter" [@@bs.send.pipe: t];
 
   /** [order query]  Sort the results by a property name in ascending or
       descending order. By default, an ascending sort order will be used. **/
-  external order : string => t = "" [@@bs.send.pipe: t];
-  external orderWithDirection : string => Js.t {. descending: Js.boolean} => t
-    = "order" [@@bs.send.pipe: t];
+  external order : propertyName => t = "" [@@bs.send.pipe: t];
+  external orderWithDirection : propertyName => Js.t {. descending: Js.boolean}
+    => t = "order" [@@bs.send.pipe: t];
 
   /** [limit query] Set a limit on a query. **/
   external limit : int => t = "" [@@bs.send.pipe: t];
@@ -50,15 +52,15 @@ module Query = {
   external startCursor : cursor => t = "start" [@@bs.send.pipe: t];
 
   /** [groupBy query] Group query results by a list of properties. **/
-  external groupBy : array string => t = "" [@@bs.send.pipe: t];
+  external groupBy : array propertyName => t = "" [@@bs.send.pipe: t];
 
   /** [offset query] Set an offset on a query. **/
   external offset : int => t = "" [@@bs.send.pipe: t];
 
   /** [select query] Retrieve only select properties from the matched entities.
       **/
-  external select : string => t = "" [@@bs.send.pipe: t];
-  external selectMultiple : array string => t = "" [@@bs.send.pipe: t];
+  external select : propertyName => t = "" [@@bs.send.pipe: t];
+  external selectMultiple : array propertyName => t = "" [@@bs.send.pipe: t];
 };
 
 module Datastore = {
