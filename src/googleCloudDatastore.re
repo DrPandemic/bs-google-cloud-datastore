@@ -4,7 +4,7 @@ type boxedInt;
 type boxedDouble;
 
 type id = Int int | BoxedInt boxedInt;
-
+type name = string;
 type propertyName = string;
 
 type kind = string;
@@ -82,12 +82,10 @@ module Datastore = {
 
   /** [key datastore] Helpers to create a Key object. **/
   external keyByKind : t => kind => key = "key" [@@bs.send];
-  /** (kind, id) **/
-  external keyByID : t => (kind, int) => key = "key" [@@bs.send];
-  /** (kind, name) **/
-  external keyByName : t => (kind, string) => key = "key" [@@bs.send];
-  external keyByPathAndID : t => path int => key = "key" [@@bs.send];
-  external keyByPathAndName : t => path string => key = "key" [@@bs.send];
+  external keyByID : t => (kind, id) => key = "key" [@@bs.send];
+  external keyByName : t => (kind, name) => key = "key" [@@bs.send];
+  external keyByPathAndID : t => path id => key = "key" [@@bs.send];
+  external keyByPathAndName : t => path name => key = "key" [@@bs.send];
 
   /** [get datastore] retrieve the entities identified with the specified key(s)
       in the current transaction. **/
