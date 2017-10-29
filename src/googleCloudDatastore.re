@@ -1,14 +1,17 @@
 type key;
 
+type boxedInt;
+type boxedDouble;
+
+type id = Int int | BoxedInt boxedInt;
+
+type propertyName = string;
+
 type kind = string;
-
 type namespace = string;
-
 type path 'a = Js.t {. namespace : namespace, path : (kind, 'a)};
 
 type cursor = string;
-
-type propertyName = string;
 
 /** From bs-express */
 module Error = {
@@ -69,6 +72,10 @@ module Datastore = {
   type t;
 
   type modificationCallback = (Js.nullable Error.t => Js.Json.t => unit);
+
+  /** Helper functions to get Datastore's objects. **/
+  external int : t => string => boxedInt = "" [@@base.send];
+  external double : t => float => boxedDouble = "" [@@base.send];
 
   /** [make ()] creates an instance of the datastore class. */
   external make : unit => t = "@google-cloud/datastore" [@@bs.module];
