@@ -39,6 +39,26 @@ module Query = {
 
   /** [hasAncestor query] Filter a query by ancestors. **/
   external hasAncestor : key => t = "" [@@bs.send.pipe: t];
+
+  /** [endCursor query] Set an ending cursor to a query. This function is
+      normally called `end` but it was renamed since there is a name conflict
+      with Reason. **/
+  external endCursor : cursor => t = "end" [@@bs.send.pipe: t];
+
+  /** [startCursor query] Set a starting cursor to a query. Was renamed to be
+      consistent with `endCursor`. **/
+  external startCursor : cursor => t = "start" [@@bs.send.pipe: t];
+
+  /** [groupBy query] Group query results by a list of properties. **/
+  external groupBy : array string => t = "" [@@bs.send.pipe: t];
+
+  /** [offset query] Set an offset on a query. **/
+  external offset : int => t = "" [@@bs.send.pipe: t];
+
+  /** [select query] Retrieve only select properties from the matched entities.
+      **/
+  external select : string => t = "" [@@bs.send.pipe: t];
+  external selectMultiple : array string => t = "" [@@bs.send.pipe: t];
 };
 
 module Datastore = {

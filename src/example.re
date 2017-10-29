@@ -45,6 +45,8 @@ let testQuery () => {
                 |> Query.filterWithOperator "name" ">" (Js.Json.string "f")
                 |> Query.limit 1;
 
+  let q1 = Query.hasAncestor key0 query;
+
   Datastore.runQuery app query (fun error results info => {
     Js.log error;
     Js.log results;
