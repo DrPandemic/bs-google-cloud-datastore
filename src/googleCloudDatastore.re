@@ -1,8 +1,10 @@
 type key;
 
-type kind 'a = (string, 'a);
+type kind = string;
 
-type path 'a = Js.t {. namespace : string, path : kind 'a};
+type namespace = string;
+
+type path 'a = Js.t {. namespace : namespace, path : (kind, 'a)};
 
 type cursor = string;
 
@@ -71,12 +73,12 @@ module Datastore = {
   /** [make ()] creates an instance of the datastore class. */
   external make : unit => t = "@google-cloud/datastore" [@@bs.module];
 
-  /** [key datastore] helpers to create a Key object **/
-  external keyByKind : t => string => key = "key" [@@bs.send];
+  /** [key datastore] Helpers to create a Key object. **/
+  external keyByKind : t => kind => key = "key" [@@bs.send];
   /** (kind, id) **/
-  external keyByID : t => (string, int) => key = "key" [@@bs.send];
+  external keyByID : t => (kind, int) => key = "key" [@@bs.send];
   /** (kind, name) **/
-  external keyByName : t => (string, string) => key = "key" [@@bs.send];
+  external keyByName : t => (kind, string) => key = "key" [@@bs.send];
   external keyByPathAndID : t => path int => key = "key" [@@bs.send];
   external keyByPathAndName : t => path string => key = "key" [@@bs.send];
 
@@ -115,10 +117,8 @@ module Datastore = {
     "delete" [@@bs.send];
 
   /** [createQuery datastore] Create a query for the specified kind **/
-  /** kind **/
-  external createQuery : t => string => Query.t = "" [@@bs.send];
-  /** namespace => kind **/
-  external createQueryWithNamespace : t => string => string => Query.t =
+  external createQuery : t => kind => Query.t = "" [@@bs.send];
+  external createQueryWithNamespace : t => namespace => kind => Query.t =
     "createQuery" [@@bs.send];
 
   /** [runQuery datastore] The query is run, and the results are returned as the
