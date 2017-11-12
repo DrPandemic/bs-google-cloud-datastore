@@ -13,7 +13,7 @@ let testSave () => {
     Datastore.save app {"key": key2, "data": { "name": "second", "yes": 42 }} (fun _ _ => {
       Datastore.getMultiple app [| key1, key2 |] (fun a b => {
         Js.log a;
-        Js.log b
+        Js.log b;
       });
     });
   });
@@ -22,7 +22,7 @@ let testSave () => {
 let testDelete () => {
   Datastore.delete app key0 (fun a b => {
     Js.log a;
-    Js.log b
+    Js.log b;
   });
 };
 
@@ -42,6 +42,11 @@ let testQuery () => {
   });
 };
 
+let testGeo () => {
+  let geo = Datastore.geoPoint app {"latitude": 1.1, "longitude": 2.2};
+  Js.log geo;
+};
+
 let testAllocateIds () => {
   Datastore.allocateIds app key0 10 (fun error results info => {
     Js.log results;
@@ -50,5 +55,6 @@ let testAllocateIds () => {
 
 /* testDelete (); */
 /* testSave (); */
-testQuery ();
+/* testQuery (); */
 /* testAllocateIds (); */
+testGeo ();

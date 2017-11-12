@@ -13,6 +13,8 @@ type path 'a = Js.t {. namespace : namespace, path : (kind, 'a)};
 
 type cursor = string;
 
+type coordinates;
+
 /** From bs-express */
 module Error = {
   type t;
@@ -141,11 +143,16 @@ module Datastore = {
       a query object that uses the end cursor from the previous query as the
       starting cursor for the next query. **/
   external runQuery : t => Query.t => (
-      Js.nullable Error.t =>
-      /** results **/
-      array (Js.t {..}) =>
-      /** info **/
-      Js.t {. endCursor: cursor, moreResult: string }
-      => unit
-    ) => unit = "" [@@bs.send];
+    Js.nullable Error.t =>
+    /** results **/
+    array (Js.t {..}) =>
+    /** info **/
+    Js.t {. endCursor: cursor, moreResult: string }
+    => unit
+  ) => unit = "" [@@bs.send];
+
+  /** [geoPoint datastore] Helper function to get a Datastore Geo Point object.
+  **/
+  external geoPoint : t => Js.t {. latitude: float, longitude: float} =>
+    coordinates = "" [@@bs.send];
 };
