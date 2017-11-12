@@ -3,7 +3,7 @@ type key;
 type boxedInt;
 type boxedDouble;
 
-type id = Int int | BoxedInt boxedInt;
+type id = int;
 type name = string;
 type propertyName = string;
 
@@ -81,11 +81,21 @@ module Datastore = {
   external make : unit => t = "@google-cloud/datastore" [@@bs.module];
 
   /** [key datastore] Helpers to create a Key object. **/
+  /** This function creates an incomplete key. **/
   external keyByKind : t => kind => key = "key" [@@bs.send];
   external keyByID : t => (kind, id) => key = "key" [@@bs.send];
+  external keyByBoxedID : t => (kind, boxedInt) => key = "key" [@@bs.send];
   external keyByName : t => (kind, name) => key = "key" [@@bs.send];
   external keyByPathAndID : t => path id => key = "key" [@@bs.send];
+  external keyByPathAndBoxedID : t => path boxedInt => key = "key" [@@bs.send];
   external keyByPathAndName : t => path name => key = "key" [@@bs.send];
+
+  /** [allocateIds] Generate IDs without creating entities. The key needs to be
+      incomplete. **/
+  external allocateIds : t => key => int =>
+    /** error, result, complete API response **/
+    (Js.nullable Error.t => array key => Js.t {..} => unit) => unit =
+    "" [@@bs.send];
 
   /** [get datastore] retrieve the entities identified with the specified key(s)
       in the current transaction. **/
