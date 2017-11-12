@@ -2,18 +2,16 @@ type key;
 
 type boxedInt;
 type boxedDouble;
+type coordinates;
 
 type id = int;
 type name = string;
 type propertyName = string;
-
 type kind = string;
 type namespace = string;
 type path 'a = Js.t {. namespace : namespace, path : (kind, 'a)};
-
 type cursor = string;
-
-type coordinates;
+type consistency = string;
 
 /** From bs-express */
 module Error = {
@@ -78,8 +76,18 @@ module Query = {
     Js.t {. endCursor: cursor, moreResult: string }
     => unit
   ) => unit = "" [@@bs.send];
+  external runWithConsistency : t => consistency => (
+    Js.nullable Error.t =>
+    /** results **/
+    array (Js.t {..}) =>
+    /** info **/
+    Js.t {. endCursor: cursor, moreResult: string }
+    => unit
+  ) => unit = "" [@@bs.send];
   /** Returns a promise **/
   external runPromise : t => Js.Promise.t (array (Js.t {..})) =
+    "run" [@@bs.send];
+  external runPromiseWithConsistency : t => consistency => Js.Promise.t (array (Js.t {..})) =
     "run" [@@bs.send];
 };
 
@@ -163,9 +171,19 @@ module Datastore = {
     Js.t {. endCursor: cursor, moreResult: string }
     => unit
   ) => unit = "" [@@bs.send];
+  external runQueryWithConsistency : t => consistency => Query.t => (
+    Js.nullable Error.t =>
+    /** results **/
+    array (Js.t {..}) =>
+    /** info **/
+    Js.t {. endCursor: cursor, moreResult: string }
+    => unit
+  ) => unit = "" [@@bs.send];
   /** Returns a promise **/
   external runQueryPromise : t => Query.t => Js.Promise.t (array (Js.t {..})) =
     "runQuery" [@@bs.send];
+  external runQueryPromiseWithConsistency : t => consistency => Query.t =>
+    Js.Promise.t (array (Js.t {..})) = "runQuery" [@@bs.send];
 
   /** [geoPoint datastore] Helper function to get a Datastore Geo Point object.
   **/
