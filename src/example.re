@@ -53,8 +53,22 @@ let testAllocateIds () => {
   });
 };
 
+let testPromise () => {
+  let query = Datastore.createQuery app "test"
+                |> Query.order "name"
+                |> Query.limit 2;
+
+  Query.runPromise query
+    |> Js.Promise.then_ (fun results => {
+      Js.log results;
+      Js.Promise.resolve ()
+    }
+  );
+};
+
 /* testDelete (); */
 /* testSave (); */
 /* testQuery (); */
 /* testAllocateIds (); */
-testGeo ();
+/* testGeo (); */
+testPromise ();

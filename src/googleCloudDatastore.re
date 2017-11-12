@@ -68,6 +68,19 @@ module Query = {
       **/
   external select : propertyName => t = "" [@@bs.send.pipe: t];
   external selectMultiple : array propertyName => t = "" [@@bs.send.pipe: t];
+
+  /** [run query] Run the query. **/
+  external run : t => (
+    Js.nullable Error.t =>
+    /** results **/
+    array (Js.t {..}) =>
+    /** info **/
+    Js.t {. endCursor: cursor, moreResult: string }
+    => unit
+  ) => unit = "" [@@bs.send];
+  /** Returns a promise **/
+  external runPromise : t => Js.Promise.t (array (Js.t {..})) =
+    "run" [@@bs.send];
 };
 
 module Datastore = {
@@ -150,6 +163,9 @@ module Datastore = {
     Js.t {. endCursor: cursor, moreResult: string }
     => unit
   ) => unit = "" [@@bs.send];
+  /** Returns a promise **/
+  external runQueryPromise : t => Query.t => Js.Promise.t (array (Js.t {..})) =
+    "runQuery" [@@bs.send];
 
   /** [geoPoint datastore] Helper function to get a Datastore Geo Point object.
   **/
