@@ -35,7 +35,7 @@ let testQuery () => {
 
   /* let q1 = Query.hasAncestor key1 query; */
 
-  Datastore.runQuery app query (fun error results info => {
+  Query.runWithConsistency query Strong (fun error results info => {
     Js.log error;
     Js.log results;
     Js.log info;
@@ -68,7 +68,7 @@ let testPromise () => {
 
 /* testDelete (); */
 /* testSave (); */
-/* testQuery (); */
+testQuery ();
 /* testAllocateIds (); */
 /* testGeo (); */
-testPromise ();
+/* testPromise (); */

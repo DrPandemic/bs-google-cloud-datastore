@@ -11,7 +11,32 @@ type kind = string;
 type namespace = string;
 type path 'a = Js.t {. namespace : namespace, path : (kind, 'a)};
 type cursor = string;
-type consistency = string;
+type consistency_ = string;
+
+type consistency =
+  | Strong
+  | Eventual;
+
+type moreResults =
+  | AfterLimit
+  | AfterCursor
+  | NoMore;
+
+type runInfo = {
+  endCursor: cursor,
+  moreResults: moreResults
+};
+let parseRun cb => (fun error result info => {
+  cb error result {
+    endCursor: info##endCursor,
+    moreResults: (switch info##moreResults {
+      | "MORE_RESULTS_AFTER_LIMIT" => AfterLimit
+      | "MORE_RESULTS_AFTER_CURSOR" => AfterCursor
+      | "NO_MORE_RESULTS" => NoMore
+      | _ => NoMore
+    })
+  };
+});
 
 /** From bs-express */
 module Error = {
@@ -68,27 +93,38 @@ module Query = {
   external selectMultiple : array propertyName => t = "" [@@bs.send.pipe: t];
 
   /** [run query] Run the query. **/
-  external run : t => (
+  external run_ : t => (
     Js.nullable Error.t =>
     /** results **/
     array (Js.t {..}) =>
     /** info **/
-    Js.t {. endCursor: cursor, moreResult: string }
+    Js.t {. endCursor: cursor, moreResults: string }
     => unit
   ) => unit = "" [@@bs.send];
-  external runWithConsistency : t => consistency => (
+  let run t cb => {
+    run_ t (parseRun cb);
+  };
+
+  external runWithConsistency_ : t => consistency_ => (
     Js.nullable Error.t =>
     /** results **/
     array (Js.t {..}) =>
     /** info **/
-    Js.t {. endCursor: cursor, moreResult: string }
+    Js.t {. endCursor: cursor, moreResults: string }
     => unit
-  ) => unit = "" [@@bs.send];
+  ) => unit = "run" [@@bs.send];
+  let runWithConsistency t consistency cb => {
+    runWithConsistency_ t (switch consistency {
+      | Strong => "strong"
+      | Eventual => "eventual"
+    }) cb
+  };
+
   /** Returns a promise **/
   external runPromise : t => Js.Promise.t (array (Js.t {..})) =
     "run" [@@bs.send];
-  external runPromiseWithConsistency : t => consistency => Js.Promise.t (array (Js.t {..})) =
-    "run" [@@bs.send];
+  external runPromiseWithConsistency : t => consistency_ =>
+    Js.Promise.t (array (Js.t {..})) = "run" [@@bs.send];
 };
 
 module Datastore = {
@@ -168,25 +204,25 @@ module Datastore = {
     /** results **/
     array (Js.t {..}) =>
     /** info **/
-    Js.t {. endCursor: cursor, moreResult: string }
+    Js.t {. endCursor: cursor, moreResults: string }
     => unit
   ) => unit = "" [@@bs.send];
-  external runQueryWithConsistency : t => consistency => Query.t => (
+  external runQueryWithConsistency : t => consistency_ => Query.t => (
     Js.nullable Error.t =>
     /** results **/
     array (Js.t {..}) =>
     /** info **/
-    Js.t {. endCursor: cursor, moreResult: string }
+    Js.t {. endCursor: cursor, moreResults: string }
     => unit
-  ) => unit = "" [@@bs.send];
+  ) => unit = "run" [@@bs.send];
   /** Returns a promise **/
   external runQueryPromise : t => Query.t => Js.Promise.t (array (Js.t {..})) =
     "runQuery" [@@bs.send];
-  external runQueryPromiseWithConsistency : t => consistency => Query.t =>
+  external runQueryPromiseWithConsistency : t => consistency_ => Query.t =>
     Js.Promise.t (array (Js.t {..})) = "runQuery" [@@bs.send];
 
   /** [geoPoint datastore] Helper function to get a Datastore Geo Point object.
-  **/
+      **/
   external geoPoint : t => Js.t {. latitude: float, longitude: float} =>
     coordinates = "" [@@bs.send];
 };
